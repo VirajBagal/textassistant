@@ -4,7 +4,7 @@
 # Created Date: Friday, 28th April 2023 8:24:42 pm                             #
 # Author: Viraj Bagal (viraj.bagal@synapsica.com)                              #
 # -----                                                                        #
-# Last Modified: Saturday, 29th April 2023 2:56:59 pm                          #
+# Last Modified: Sunday, 30th April 2023 8:48:03 am                            #
 # Modified By: Viraj Bagal (viraj.bagal@synapsica.com)                         #
 # -----                                                                        #
 # Copyright (c) 2023 Synapsica                                                 #
@@ -15,7 +15,7 @@ from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.vectorstores import DeepLake
 
 LONG_VIDEO_THRESHOLD = 3500
-REJECT_TOKENS_THRESHOLD = 100
+REJECT_TOKENS_THRESHOLD = 20000
 YOUTUBE_URL = "https://www.youtube.com/watch?v=LbT1yp6quS8&ab_channel=PatrickLoeber"
 
 
