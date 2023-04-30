@@ -4,7 +4,7 @@
 # Created Date: Friday, 28th April 2023 8:27:55 pm                             #
 # Author: Viraj Bagal (viraj.bagal@synapsica.com)                              #
 # -----                                                                        #
-# Last Modified: Sunday, 30th April 2023 9:16:27 am                            #
+# Last Modified: Sunday, 30th April 2023 11:23:38 am                           #
 # Modified By: Viraj Bagal (viraj.bagal@synapsica.com)                         #
 # -----                                                                        #
 # Copyright (c) 2023 Synapsica                                                 #
@@ -28,10 +28,17 @@ def initialize_retriever(database):
 
 def prepare_files_for_qa(file_path):
     logger.info("Loading file for qa")
-    if ".pdf" in file_path:
-        content = utils.load_pdf(file_path)
-    elif ".doc" in file_path or ".docx" in file_path:
-        content = utils.load_doc(file_path)
+    content = []
+    try:
+        if ".pdf" in file_path:
+            content = utils.load_pdf(file_path)
+        elif ".doc" in file_path or ".docx" in file_path:
+            content = utils.load_doc(file_path)
+        elif ".png" in file_path or ".jpg" in file_path:
+            content = utils.load_image(file_path)
+    except:
+        logging.exception("")
+        return "File cannot be processed"
     logger.info("file loaded for qa")
     logger.info(f"Total number of pages are {len(content)}")
     total_tokens = 0

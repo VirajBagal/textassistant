@@ -4,7 +4,7 @@
 # Created Date: Friday, 28th April 2023 8:26:49 pm                             #
 # Author: Viraj Bagal (viraj.bagal@synapsica.com)                              #
 # -----                                                                        #
-# Last Modified: Sunday, 30th April 2023 9:14:20 am                            #
+# Last Modified: Sunday, 30th April 2023 11:23:14 am                           #
 # Modified By: Viraj Bagal (viraj.bagal@synapsica.com)                         #
 # -----                                                                        #
 # Copyright (c) 2023 Synapsica                                                 #
@@ -127,10 +127,16 @@ def summarize_youtube_video(url, output_format):
 def summarize_file(file_path, output_format):
     logger.info("Loading file for qa")
     result = []
-    if ".pdf" in file_path:
-        result = utils.load_pdf(file_path)
-    elif ".doc" in file_path or ".docx" in file_path:
-        result = utils.load_doc(file_path)
+    try:
+        if ".pdf" in file_path:
+            result = utils.load_pdf(file_path)
+        elif ".doc" in file_path or ".docx" in file_path:
+            result = utils.load_doc(file_path)
+        elif ".png" in file_path or ".jpg" in file_path:
+            result = utils.load_image(file_path)
+    except:
+        logging.exception("")
+        return "File cannot be processed"
     logger.info("File loaded for qa")
     logger.info(f"Total number of pages are {len(result)}")
     total_tokens = 0
