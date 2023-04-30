@@ -4,7 +4,7 @@
 # Created Date: Thursday, 27th April 2023 8:40:12 pm                           #
 # Author: Viraj Bagal (viraj.bagal@synapsica.com)                              #
 # -----                                                                        #
-# Last Modified: Saturday, 29th April 2023 2:54:12 pm                          #
+# Last Modified: Sunday, 30th April 2023 9:37:14 am                            #
 # Modified By: Viraj Bagal (viraj.bagal@synapsica.com)                         #
 # -----                                                                        #
 # Copyright (c) 2023 Synapsica                                                 #
@@ -67,7 +67,7 @@ def send_prepare_qa_request(uploaded_file=None, yt_url=None):
     payload = {}
     files = {}
     if uploaded_file:
-        url = "http://127.0.0.1:8000/upload_pdf"
+        url = "http://127.0.0.1:8000/upload_file"
         bytes_data = uploaded_file.getvalue()
         files = [("file", (uploaded_file.name, bytes_data, "application/pdf"))]
     elif yt_url:
@@ -82,7 +82,7 @@ def send_summarize_request(uploaded_file=None, yt_url=None):
     headers = {}
     files = {}
     if uploaded_file:
-        url = "http://127.0.0.1:8000/summarize_pdf"
+        url = "http://127.0.0.1:8000/summarize_file"
         bytes_data = uploaded_file.getvalue()
         files = [("file", (uploaded_file.name, bytes_data, "application/pdf"))]
     elif yt_url:
@@ -104,23 +104,30 @@ def set_output_format(output_format):
 colT1, colT2 = st.columns([1, 3])
 with colT2:
     st.title(":orange[TextAssistant] :sunglasses:")
-colT1, colT2 = st.columns([1, 6])
+colT1, colT2 = st.columns([1, 5])
 with colT2:
-    st.subheader(
-        "Understand :blue[PDFs / Youtube Videos] quickly :man-running: with :blue[AI Summarization and Interactive Q&A]"
-    )
+    st.subheader("Understand content quickly with :blue[AI Summarization and Interactive Q&A]")
+    st.caption("Supports :blue[Docs, PDFs, Youtube Videos]")
 
 st.text("")
 st.text("")
-category = st.radio("Run AI on?", ("", "PDF", "Youtube video"), horizontal=True)
+category = st.radio("Run AI on?", ("", "File", "Youtube video"), horizontal=True)
 uploaded_file = None
 yt_url = None
-if category == "PDF":
-    uploaded_file = st.file_uploader("Choose a PDF")
+is_supported = False
+if category == "File":
+    uploaded_file = st.file_uploader("Choose a File")
+    if uploaded_file:
+        file_name = uploaded_file.name
+        extension = file_name.split(".")[-1]
+        allowed_file_types = ["doc", "docx", "pdf"]
+        is_supported = extension in allowed_file_types
+        if not is_supported:
+            st.error(f"This file format is not supported. Please upload either of {', '.join(allowed_file_types)}")
 elif category == "Youtube video":
     yt_url = st.text_input("Enter Youtube video URL")
 
-if category != "" and (uploaded_file or yt_url):
+if category != "" and is_supported and (uploaded_file or yt_url):
     task = st.radio("Which task do you want the AI to do?", ("", "Summarize", "Q&A"), horizontal=True)
     if task == "Q&A":
         st.write("Preparing the AI for Q&A...")

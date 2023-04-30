@@ -1,0 +1,6 @@
+__pycache__/
+.env
+*.log
+*.pdf
+database
+received_files

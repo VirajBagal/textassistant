@@ -4,7 +4,7 @@
 # Created Date: Friday, 28th April 2023 8:27:55 pm                             #
 # Author: Viraj Bagal (viraj.bagal@synapsica.com)                              #
 # -----                                                                        #
-# Last Modified: Saturday, 29th April 2023 12:07:37 pm                         #
+# Last Modified: Sunday, 30th April 2023 9:16:27 am                            #
 # Modified By: Viraj Bagal (viraj.bagal@synapsica.com)                         #
 # -----                                                                        #
 # Copyright (c) 2023 Synapsica                                                 #
@@ -26,10 +26,13 @@ def initialize_retriever(database):
     return qa
 
 
-def prepare_pdf_for_qa(pdf_path):
-    logger.info("Loading pdf for qa")
-    content = utils.load_pdf(pdf_path)
-    logger.info("PDF loaded for qa")
+def prepare_files_for_qa(file_path):
+    logger.info("Loading file for qa")
+    if ".pdf" in file_path:
+        content = utils.load_pdf(file_path)
+    elif ".doc" in file_path or ".docx" in file_path:
+        content = utils.load_doc(file_path)
+    logger.info("file loaded for qa")
     logger.info(f"Total number of pages are {len(content)}")
     total_tokens = 0
     for page in content:
@@ -38,7 +41,7 @@ def prepare_pdf_for_qa(pdf_path):
     if total_tokens > utils.REJECT_TOKENS_THRESHOLD:
         logger.info(f"Rejecting request due to large number of tokens: {total_tokens}")
         return "Sorry! Too long"
-    file_name = pdf_path.split("/")[-1].split(".")[0]
+    file_name = file_path.split("/")[-1].split(".")[0]
     logger.info("Creating embeddings")
     database = utils.form_embeddings(content, file_name)
     logger.info("Embeddings created. Now initializing retriever")
