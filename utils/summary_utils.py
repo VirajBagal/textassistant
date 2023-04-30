@@ -4,7 +4,7 @@
 # Created Date: Friday, 28th April 2023 8:26:49 pm                             #
 # Author: Viraj Bagal (viraj.bagal@synapsica.com)                              #
 # -----                                                                        #
-# Last Modified: Saturday, 29th April 2023 1:26:31 pm                          #
+# Last Modified: Sunday, 30th April 2023 9:14:20 am                            #
 # Modified By: Viraj Bagal (viraj.bagal@synapsica.com)                         #
 # -----                                                                        #
 # Copyright (c) 2023 Synapsica                                                 #
@@ -124,10 +124,14 @@ def summarize_youtube_video(url, output_format):
     # save(audio, filename="trial.wav")
 
 
-def summarize_pdf(pdf_path, output_format):
-    logger.info("Loading pdf for qa")
-    result = utils.load_pdf(pdf_path)
-    logger.info("PDF loaded for qa")
+def summarize_file(file_path, output_format):
+    logger.info("Loading file for qa")
+    result = []
+    if ".pdf" in file_path:
+        result = utils.load_pdf(file_path)
+    elif ".doc" in file_path or ".docx" in file_path:
+        result = utils.load_doc(file_path)
+    logger.info("File loaded for qa")
     logger.info(f"Total number of pages are {len(result)}")
     total_tokens = 0
     for page in result:

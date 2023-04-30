@@ -11,14 +11,7 @@ Tech used:
 ### How to run
 1. Clone the repository
 2. pip install -r requirements.txt
-3. Run backend:
-```
-uvicorn app:app --reload --port 8000
-```
-4. Run frontend
-```
-streamlit run frontend.py
-```
+3. make start_servers -j2
 
 ### Videos
 

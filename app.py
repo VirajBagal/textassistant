@@ -4,7 +4,7 @@
 # Created Date: Thursday, 27th April 2023 5:27:15 pm                           #
 # Author: Viraj Bagal (viraj.bagal@synapsica.com)                              #
 # -----                                                                        #
-# Last Modified: Saturday, 29th April 2023 2:58:36 pm                          #
+# Last Modified: Sunday, 30th April 2023 9:15:45 am                            #
 # Modified By: Viraj Bagal (viraj.bagal@synapsica.com)                         #
 # -----                                                                        #
 # Copyright (c) 2023 Synapsica                                                 #
@@ -26,14 +26,14 @@ load_dotenv()
 app = FastAPI()
 
 
-@app.post("/upload_pdf")
+@app.post("/upload_file")
 async def upload_pdf(file: UploadFile = File(...)):
     content = await file.read()
     logger.info(f"Received {file.filename} at upload_pdf endpoint")
-    with open("./received_pdfs/" + file.filename, "wb") as f:
+    with open("./received_files/" + file.filename, "wb") as f:
         f.write(content)
     global retriever
-    retriever = qa_utils.prepare_pdf_for_qa("./received_pdfs/" + file.filename)
+    retriever = qa_utils.prepare_files_for_qa("./received_files/" + file.filename)
     if isinstance(retriever, str):
         return {"status": retriever}
     return {"status": "Success"}
@@ -57,13 +57,13 @@ async def ask_question(question):
     return {"response": answer}
 
 
-@app.post("/summarize_pdf")
-async def summarise_pdf(file: UploadFile = File(...)):
+@app.post("/summarize_file")
+async def summarise_file(file: UploadFile = File(...)):
     content = await file.read()
-    logger.info(f"Received {file.filename} at summarize_pdf endpoint")
-    with open("./received_pdfs/" + file.filename, "wb") as f:
+    logger.info(f"Received {file.filename} at summarize_file endpoint")
+    with open("./received_files/" + file.filename, "wb") as f:
         f.write(content)
-    summary = summary_utils.summarize_pdf("./received_pdfs/" + file.filename, output_format)
+    summary = summary_utils.summarize_file("./received_files/" + file.filename, output_format)
     return {"response": summary}
 
 

@@ -4,13 +4,12 @@
 # Created Date: Friday, 28th April 2023 8:24:42 pm                             #
 # Author: Viraj Bagal (viraj.bagal@synapsica.com)                              #
 # -----                                                                        #
-# Last Modified: Sunday, 30th April 2023 8:48:03 am                            #
+# Last Modified: Sunday, 30th April 2023 9:41:11 am                            #
 # Modified By: Viraj Bagal (viraj.bagal@synapsica.com)                         #
 # -----                                                                        #
 # Copyright (c) 2023 Synapsica                                                 #
 ################################################################################
-from langchain.document_loaders import PyPDFLoader
-from langchain.document_loaders import YoutubeLoader
+from langchain.document_loaders import PyPDFLoader, UnstructuredWordDocumentLoader, YoutubeLoader
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.vectorstores import DeepLake
 
@@ -23,6 +22,12 @@ def load_pdf(pdf_path):
     loader = PyPDFLoader(pdf_path)
     pages = loader.load_and_split()
     return pages
+
+
+def load_doc(doc_path):
+    loader = UnstructuredWordDocumentLoader(doc_path)
+    data = loader.load()
+    return data
 
 
 def form_embeddings(content, file_name):
