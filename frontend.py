@@ -4,7 +4,7 @@
 # Created Date: Thursday, 27th April 2023 8:40:12 pm                           #
 # Author: Viraj Bagal (viraj.bagal@synapsica.com)                              #
 # -----                                                                        #
-# Last Modified: Sunday, 30th April 2023 9:37:14 am                            #
+# Last Modified: Sunday, 30th April 2023 11:29:09 am                           #
 # Modified By: Viraj Bagal (viraj.bagal@synapsica.com)                         #
 # -----                                                                        #
 # Copyright (c) 2023 Synapsica                                                 #
@@ -107,7 +107,7 @@ with colT2:
 colT1, colT2 = st.columns([1, 5])
 with colT2:
     st.subheader("Understand content quickly with :blue[AI Summarization and Interactive Q&A]")
-    st.caption("Supports :blue[Docs, PDFs, Youtube Videos]")
+    st.caption("Supports :blue[PNGs, JPGs, Docs, PDFs, Youtube Videos]")
 
 st.text("")
 st.text("")
@@ -120,7 +120,7 @@ if category == "File":
     if uploaded_file:
         file_name = uploaded_file.name
         extension = file_name.split(".")[-1]
-        allowed_file_types = ["doc", "docx", "pdf"]
+        allowed_file_types = ["doc", "docx", "pdf", "jpg", "png"]
         is_supported = extension in allowed_file_types
         if not is_supported:
             st.error(f"This file format is not supported. Please upload either of {', '.join(allowed_file_types)}")
@@ -150,8 +150,8 @@ if category != "" and is_supported and (uploaded_file or yt_url):
             response = set_output_format(output_format)
             if response == "Successful":
                 response = send_summarize_request(uploaded_file=uploaded_file, yt_url=yt_url)
-                if response != "Sorry! Too long":
+                if response not in ["Sorry! Too long", "File cannot be processed"]:
                     st.info(response)
                 else:
-                    st.error(response)
+                    st.error(f":red[{response}]")
                 logger.info("Completed the request \n \n")
