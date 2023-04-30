@@ -1,4 +1,4 @@
-FROM continuumio/anaconda3
+FROM continuumio/miniconda3
 
 RUN apt-get update && apt-get install -y python3-pip && apt-get install build-essential -y && apt-get install manpages-dev -y && apt-get -y install git
 
@@ -20,8 +20,8 @@ COPY Makefile .
 COPY app.py app.py
 COPY frontend.py frontend.py
 
-ENV OPENAI_API_KEY
-ENV ACTIVELOOP_TOKEN
+ENV OPENAI_API_KEY=""
+ENV ACTIVELOOP_TOKEN=""
 
 COPY utils utils
 EXPOSE 8501
