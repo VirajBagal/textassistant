@@ -56,3 +56,4 @@ This means you have successfully transfered the NameServers to AWS.
 17. Following links for adding social media handles to streamlit:
 Linkedin Profile: https://www.youtube.com/watch?v=R361fvf3Cic
 Twitter follow button: https://publish.twitter.com/?buttonType=FollowButton&query=https%3A%2F%2Ftwitter.com%2FTwitterDev&widget=Button
+18. Different types of retrieval: https://blog.langchain.dev/retrieval/#:~:text=The%20main%20way%20most%20people,for%20storing%20and%20querying%20vectors).
