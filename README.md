@@ -39,11 +39,11 @@ If you want to run in production without SSL, then same above commands will work
 
 ### How to run in production with reverse proxy and SSL
 
-Prerequisites: Install docker and docker compose
+Prerequisites: Needs instance with more than 2GB RAM, Install docker and docker compose
 
 1. Clone the repo
 2. `cd` to repo
-3. `sudo ACTIVELOOP_TOKEN=YOURKEY OPENAI_API_KEY=YOURKEY docker-compose -f production.yml up --build`
+3. `sudo ACTIVELOOP_TOKEN=YOURKEY OPENAI_API_KEY=YOURKEY docker-compose -f production.yml up`
 
 ### Videos
 
