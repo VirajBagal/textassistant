@@ -4,7 +4,7 @@
 # Created Date: Thursday, 27th April 2023 5:27:15 pm                           #
 # Author: Viraj Bagal (viraj.bagal@synapsica.com)                              #
 # -----                                                                        #
-# Last Modified: Sunday, 30th April 2023 9:15:45 am                            #
+# Last Modified: Tuesday, 2nd May 2023 7:43:46 pm                              #
 # Modified By: Viraj Bagal (viraj.bagal@synapsica.com)                         #
 # -----                                                                        #
 # Copyright (c) 2023 Synapsica                                                 #
@@ -17,7 +17,7 @@ import logging
 logging.basicConfig(
     format="%(asctime)s - %(name)-8s - %(process)d - %(levelname)-7s [%(filename)s:%(lineno)d] - %(message)s",
     datefmt="%d-%b-%y %H:%M:%S",
-    filename="app.log",
+    filename="logs/app.log",
     level=logging.INFO,
 )
 logger = logging.getLogger("root")
@@ -52,6 +52,8 @@ async def prepare_yt_video(yt_url):
 @app.post("/ask_question")
 async def ask_question(question):
     logger.info(f"Question received at ask_question endpoint: {question}")
+    admin_prompt = "Following is a question, answer it only based on the document. If answer is not available, respond with 'Answer not found in document'. Do not generate any response other than based on document. Here is the question: "
+    question = admin_prompt + question
     answer = retriever.run(question)
     logger.info("Answer generated \n \n")
     return {"response": answer}

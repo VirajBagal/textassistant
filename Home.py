@@ -4,7 +4,7 @@
 # Created Date: Thursday, 27th April 2023 8:40:12 pm                           #
 # Author: Viraj Bagal (viraj.bagal@synapsica.com)                              #
 # -----                                                                        #
-# Last Modified: Sunday, 30th April 2023 11:29:09 am                           #
+# Last Modified: Wednesday, 3rd May 2023 6:09:57 pm                            #
 # Modified By: Viraj Bagal (viraj.bagal@synapsica.com)                         #
 # -----                                                                        #
 # Copyright (c) 2023 Synapsica                                                 #
@@ -12,6 +12,8 @@
 import streamlit as st
 import requests
 import logging
+import logging
+from utils import utils
 
 logger = logging.getLogger("root")
 
@@ -51,7 +53,34 @@ hide_streamlit_style = """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
 
-@st.cache_data(show_spinner=False)
+def set_page_title(title):
+    st.sidebar.markdown(
+        unsafe_allow_html=True,
+        body=f"""
+        <iframe height=0 srcdoc="<script>
+            const title = window.parent.document.querySelector('title') \
+                
+            const oldObserver = window.parent.titleObserver
+            if (oldObserver) {{
+                oldObserver.disconnect()
+            }} \
+
+            const newObserver = new MutationObserver(function(mutations) {{
+                const target = mutations[0].target
+                if (target.text !== '{title}') {{
+                    target.text = '{title}'
+                }}
+            }}) \
+
+            newObserver.observe(title, {{ childList: true }})
+            window.parent.titleObserver = newObserver \
+
+            title.text = '{title}'
+        </script>" />
+    """,
+    )
+
+
 def get_answer(text):
     url = f"http://127.0.0.1:8000/ask_question?question={text}"
     payload = {}
@@ -76,7 +105,6 @@ def send_prepare_qa_request(uploaded_file=None, yt_url=None):
     return eval(response.text)["status"]
 
 
-# @st.cache_data(show_spinner=False)
 def send_summarize_request(uploaded_file=None, yt_url=None):
     payload = {}
     headers = {}
@@ -91,7 +119,6 @@ def send_summarize_request(uploaded_file=None, yt_url=None):
     return eval(response.text)["response"]
 
 
-@st.cache_data(show_spinner=False)
 def set_output_format(output_format):
     url = f"http://127.0.0.1:8000/set_output_format?format={output_format}"
     payload = {}
@@ -101,10 +128,28 @@ def set_output_format(output_format):
     return eval(response.text)["status"]
 
 
+twitter_follow_html = """
+<a href="https://twitter.com/viraj_bagal" class="twitter-follow-button" data-show-count="false">Follow @VirajBagal</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+"""
+
+linkedin_profile_html = """
+<script src="https://platform.linkedin.com/badges/js/profile.js" async defer type="text/javascript"></script>
+<div class="badge-base LI-profile-badge" data-locale="en_US" data-size="medium" data-theme="light" data-type="VERTICAL" data-vanity="virajbagal" data-version="v1"></div>
+"""
+
+with open("style/main.css") as f:
+    st.markdown(f"""<style>{f.read()}</style>""", unsafe_allow_html=True)
+
+set_page_title("Home")
+
+with st.sidebar:
+    st.components.v1.html(linkedin_profile_html, height=300)
+    st.components.v1.html(twitter_follow_html, height=100)
+
 colT1, colT2 = st.columns([1, 3])
 with colT2:
-    st.title(":orange[TextAssistant] :sunglasses:")
-colT1, colT2 = st.columns([1, 5])
+    st.title(":orange[InsightAI] :sunglasses:")
+colT1, colT2 = st.columns([1, 6])
 with colT2:
     st.subheader("Understand content quickly with :blue[AI Summarization and Interactive Q&A]")
     st.caption("Supports :blue[PNGs, JPGs, Docs, PDFs, Youtube Videos]")
@@ -126,17 +171,20 @@ if category == "File":
             st.error(f"This file format is not supported. Please upload either of {', '.join(allowed_file_types)}")
 elif category == "Youtube video":
     yt_url = st.text_input("Enter Youtube video URL")
+    yt_url = utils.convert_from_mobile_url(yt_url)
+    st.components.v1.iframe(f"""{yt_url.replace("watch?v=", "embed/")}""", scrolling=True, height=350)
+    is_supported = True
 
 if category != "" and is_supported and (uploaded_file or yt_url):
     task = st.radio("Which task do you want the AI to do?", ("", "Summarize", "Q&A"), horizontal=True)
     if task == "Q&A":
-        st.write("Preparing the AI for Q&A...")
-        response = send_prepare_qa_request(uploaded_file=uploaded_file, yt_url=yt_url)
+        with st.spinner("Preparing the AI for Q&A..."):
+            response = send_prepare_qa_request(uploaded_file=uploaded_file, yt_url=yt_url)
         if response == "Success":
-            st.write("The AI is ready!")
             title = st.text_input("Enter question here")
             if st.button("Submit"):
-                answer = get_answer(title)
+                with st.spinner("AI is searching..."):
+                    answer = get_answer(title)
                 st.info(answer)
         else:
             st.error(f":red[{response}]")
@@ -146,11 +194,15 @@ if category != "" and is_supported and (uploaded_file or yt_url):
             "What output format?", ("", "One Sentence", "Bullet points", "Short", "Long"), horizontal=True
         )
         if output_format != "":
-            st.write("Summarising the input...")
             response = set_output_format(output_format)
             if response == "Successful":
-                response = send_summarize_request(uploaded_file=uploaded_file, yt_url=yt_url)
-                if response not in ["Sorry! Too long", "File cannot be processed"]:
+                with st.spinner("Summarising the input..."):
+                    response = send_summarize_request(uploaded_file=uploaded_file, yt_url=yt_url)
+                if response not in [
+                    "Sorry! Too long. Currently, service has 20,000 token limit",
+                    "File cannot be processed",
+                    "Video cannot be processed",
+                ]:
                     st.info(response)
                 else:
                     st.error(f":red[{response}]")

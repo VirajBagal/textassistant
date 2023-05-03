@@ -4,7 +4,7 @@
 # Created Date: Friday, 28th April 2023 8:24:42 pm                             #
 # Author: Viraj Bagal (viraj.bagal@synapsica.com)                              #
 # -----                                                                        #
-# Last Modified: Sunday, 30th April 2023 9:47:14 am                            #
+# Last Modified: Wednesday, 3rd May 2023 6:34:05 pm                            #
 # Modified By: Viraj Bagal (viraj.bagal@synapsica.com)                         #
 # -----                                                                        #
 # Copyright (c) 2023 Synapsica                                                 #
@@ -13,6 +13,7 @@ from langchain.document_loaders import PyPDFLoader, UnstructuredWordDocumentLoad
 from langchain.document_loaders.image import UnstructuredImageLoader
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.vectorstores import DeepLake
+from langchain.text_splitter import RecursiveCharacterTextSplitter
 
 LONG_VIDEO_THRESHOLD = 3500
 REJECT_TOKENS_THRESHOLD = 20000
@@ -37,13 +38,31 @@ def load_image(image_path):
     return data
 
 
+def split_text(document, chunk_size, overlap):
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=chunk_size, chunk_overlap=overlap)
+    texts = text_splitter.split_documents(document)
+    return texts
+
+
 def form_embeddings(content, file_name):
     embeddings = OpenAIEmbeddings()
     db = DeepLake.from_documents(content, dataset_path=f"./database/{file_name}/", embedding=embeddings)
     return db
 
 
+def convert_from_mobile_url(url):
+    # convert mobile yt url
+    # https://m.youtube.com/watch?v=LDVyOnf0t9M&feature=youtu.be  ---> https://m.youtube.com/watch?v=LDVyOnf0t9M
+    url = url.replace("&feature=youtu.be", "")
+    # https://m.youtube.com/watch?v=LDVyOnf0t9M ---> https://www.youtube.com/watch?v=LDVyOnf0t9M
+    url = url.replace("m.youtube", "www.youtube")
+    # https://youtu.be/LDVyOnf0t9M ---> https://www.youtube.com/watch?v=LDVyOnf0t9M
+    url = url.replace("youtu.be/", "www.youtube.com/watch?v=")
+    return url
+
+
 def load_youtube_url(url):
+    url = convert_from_mobile_url(url)
     loader = YoutubeLoader.from_youtube_url(url, add_video_info=False)
     result = loader.load()
     return result

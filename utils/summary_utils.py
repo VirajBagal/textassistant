@@ -4,14 +4,13 @@
 # Created Date: Friday, 28th April 2023 8:26:49 pm                             #
 # Author: Viraj Bagal (viraj.bagal@synapsica.com)                              #
 # -----                                                                        #
-# Last Modified: Sunday, 30th April 2023 11:23:14 am                           #
+# Last Modified: Wednesday, 3rd May 2023 6:34:00 pm                            #
 # Modified By: Viraj Bagal (viraj.bagal@synapsica.com)                         #
 # -----                                                                        #
 # Copyright (c) 2023 Synapsica                                                 #
 ################################################################################
 from utils import utils
 from langchain.chat_models import ChatOpenAI
-from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.chains.summarize import load_summarize_chain
 
 # Prompt templates for dynamic values
@@ -97,58 +96,61 @@ def create_prompts():
 
 
 def long_content_summarizer(document, output_format):
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=2000, chunk_overlap=0)
-    texts = text_splitter.split_documents(document)
+    texts = utils.split_text(document, 2000, 0)
     summary = content_summarizer(texts, output_format, chain_type="map_reduce")
     return summary
 
 
 def summarize_youtube_video(url, output_format):
-    logger.info("Loading YT content")
-    result = utils.load_youtube_url(url)
-    logger.info("YT content loaded")
-    num_tokens = utils.estimate_tokens(result[0])
-    logger.info(f"Estimated tokens are {num_tokens}")
-    if num_tokens > utils.REJECT_TOKENS_THRESHOLD:
-        logger.info(f"Rejecting request due to large number of tokens: {num_tokens}")
-        return "Sorry! Too long"
-    if num_tokens > utils.LONG_VIDEO_THRESHOLD:
-        logger.info("Generating summary from long_content_summarizer")
-        summary = long_content_summarizer(result, output_format)
-    else:
-        logger.info("Generating summary from content_summarizer")
-        summary = content_summarizer(result, output_format, chain_type="map_reduce")
-    logger.info("Summary generated \n \n")
+    try:
+        logger.info("Loading YT content")
+        result = utils.load_youtube_url(url)
+        logger.info("YT content loaded")
+        num_tokens = utils.estimate_tokens(result[0])
+        logger.info(f"Estimated tokens are {num_tokens}")
+        if num_tokens > utils.REJECT_TOKENS_THRESHOLD:
+            logger.info(f"Rejecting request due to large number of tokens: {num_tokens}")
+            return "Sorry! Too long"
+        if num_tokens > utils.LONG_VIDEO_THRESHOLD:
+            logger.info("Generating summary from long_content_summarizer")
+            summary = long_content_summarizer(result, output_format)
+        else:
+            logger.info("Generating summary from content_summarizer")
+            summary = content_summarizer(result, output_format, chain_type="map_reduce")
+        logger.info("Summary generated \n \n")
+    except:
+        logging.exception("")
+        return "Video cannot be processed"
     return summary
     # audio = generate(summary)
     # save(audio, filename="trial.wav")
 
 
 def summarize_file(file_path, output_format):
-    logger.info("Loading file for qa")
-    result = []
     try:
+        logger.info("Loading file for qa")
+        result = []
         if ".pdf" in file_path:
             result = utils.load_pdf(file_path)
         elif ".doc" in file_path or ".docx" in file_path:
             result = utils.load_doc(file_path)
         elif ".png" in file_path or ".jpg" in file_path:
             result = utils.load_image(file_path)
+        logger.info("File loaded for qa")
+        logger.info(f"Total number of pages are {len(result)}")
+        total_tokens = 0
+        for page in result:
+            total_tokens += utils.estimate_tokens(page)
+        logger.info(f"Estimated tokens are {total_tokens}")
+        if total_tokens > utils.REJECT_TOKENS_THRESHOLD:
+            logger.info(f"Rejecting request due to large number of tokens: {total_tokens}")
+            return "Sorry! Too long"
+        logger.info("Generating summary from content_summarizer")
+        summary = content_summarizer(result, output_format, chain_type="map_reduce")
+        logger.info("Summary generated \n \n")
     except:
         logging.exception("")
         return "File cannot be processed"
-    logger.info("File loaded for qa")
-    logger.info(f"Total number of pages are {len(result)}")
-    total_tokens = 0
-    for page in result:
-        total_tokens += utils.estimate_tokens(page)
-    logger.info(f"Estimated tokens are {total_tokens}")
-    if total_tokens > utils.REJECT_TOKENS_THRESHOLD:
-        logger.info(f"Rejecting request due to large number of tokens: {total_tokens}")
-        return "Sorry! Too long"
-    logger.info("Generating summary from content_summarizer")
-    summary = content_summarizer(result, output_format, chain_type="map_reduce")
-    logger.info("Summary generated \n \n")
     return summary
     # audio = generate(summary)
     # save(audio, filename="trial.wav")
