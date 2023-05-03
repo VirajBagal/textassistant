@@ -1,0 +1,33 @@
+version: '3'
+
+volumes:
+  production_traefik: {}
+
+services:
+  streamlit:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    image: ghcr.io/virajbagal/text:latest
+    container_name: streamlit_app
+    restart: always
+    volumes:
+      - /home/ubuntu/data/received_files:/textassistant/received_files
+      - /home/ubuntu/data/logs:/textassistant/logs
+    environment:
+      - OPENAI_API_KEY
+      - ACTIVELOOP_TOKEN
+    expose:
+      - "8501"
+
+
+  traefik:
+    build:
+      context: .
+      dockerfile: ./compose/traefik/Dockerfile
+    image: traefik_production
+    volumes:
+      - production_traefik:/etc/traefik/acme:z
+    ports:
+      - "0.0.0.0:80:80"
+      - "0.0.0.0:443:443"

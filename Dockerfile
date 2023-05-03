@@ -28,7 +28,8 @@ ENV OPENAI_API_KEY=""
 ENV ACTIVELOOP_TOKEN=""
 
 COPY utils utils
+# http needs port 80. https needs port 443
 EXPOSE 8501
-# CMD ["make", "start_servers", "-j2"]
+CMD ["make", "start_servers", "-j2"]
 # use the following command instead of the above, for starting servers locally and testing.
-CMD ["make", "start_servers_locally", "-j2"]
+# CMD ["make", "start_servers_locally", "-j2"]
