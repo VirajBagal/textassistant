@@ -33,6 +33,8 @@ Prerequisite: Install docker
 5. `docker run -p 8501:8501 --env-file .env localrun:latest`
 6. Open any browser and go to `127.0.0.1:8501` to see the project
 
+Use `./kill_all_containers.sh` to stop the servers
+
 If you want to run in production without SSL, then same above commands will work on ec2 and you can go to the ip of ec2 in chrome to see the project. If domain name is obtained and setup is done on AWS Route 53 with ip given to `A` type record, then you can even use domain name for checking it on browser.
 
 ### How to run in production with reverse proxy and SSL
