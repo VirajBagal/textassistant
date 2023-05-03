@@ -9,12 +9,39 @@ Tech used:
 3. Langchain - for backend logic
 4. GPT-4 and GPT-3.5-turbo API calls
 5. Prompt Engineering for different types of AI responses, and also to stop Prompt Injection Attacks
+6. Activeloop as vector database
+7. Retrieval augmented generation for QA
+8. Detectron2 + Tesseract for text in image parsing
+9. Some HTML and CSS for frontend customization
+10. Google Analytics integrated
+11. Traefik as reverse proxy for ssl connection (https)
+12. Lets encrypt for ssl certificates
+13. Docker and Docker compose for running everything
+    
+### How to run locally
 
-### How to run
+Prerequisite: Install docker
+
 1. Clone the repository
-2. pip install -r requirements.txt
-3. make start_servers -j2
+2. Uncomment the last line (`CMD` line) in Dockerfile and comment the 3rd last `CMD` line
+3. `docker build -t localrun:latest .`
+4. Create `.env` file with your own `OPENAI_API_KEY` and `ACTIVELOOP_TOKEN` at the root location of the project. Each can be obtained after creating account on `OpenAI` and `Activeloop` websites. You will be charged by OpenAI. The format of `.env` is as following:
+   ```
+   OPENAI_API_KEY=YOURKEY
+   ACTIVELOOP_TOKEN=YOURKEY
+   ```
+5. `docker run -p 8501:8501 --env-file .env localrun:latest`
+6. Open any browser and go to `127.0.0.1:8501` to see the project
 
+If you want to run in production without SSL, then same above commands will work on ec2 and you can go to the ip of ec2 in chrome to see the project. If domain name is obtained and setup is done on AWS Route 53 with ip given to `A` type record, then you can even use domain name for checking it on browser.
+
+### How to run in production with reverse proxy and SSL
+
+Prerequisites: Install docker and docker compose
+
+1. Clone the repo
+2. `cd` to repo
+3. `sudo ACTIVELOOP_TOKEN=YOURKEY OPENAI_API_KEY=YOURKEY docker-compose -f production.yml up --build`
 
 ### Videos
 
@@ -57,3 +84,15 @@ This means you have successfully transfered the NameServers to AWS.
 Linkedin Profile: https://www.youtube.com/watch?v=R361fvf3Cic
 Twitter follow button: https://publish.twitter.com/?buttonType=FollowButton&query=https%3A%2F%2Ftwitter.com%2FTwitterDev&widget=Button
 18. Different types of retrieval: https://blog.langchain.dev/retrieval/#:~:text=The%20main%20way%20most%20people,for%20storing%20and%20querying%20vectors).
+
+
+#### How I ran in development
+
+1. Build image locally using `docker build -t ghcr.io/virajbagal/text:latest .`
+2. Push to GCR: `docker push ghcr.io/virajbagal/text:latest`
+3. ssh into ec2 instance
+4. Pull the image: `docker pull ghcr.io/virajbagal/text:latest`
+5. `sudo ACTIVELOOP_TOKEN=YOURKEY OPENAI_API_KEY=YOURKEY docker-compose -f production.yml up`
+
+Before pushing and pulling we need to setup credentials using github token. Process can be found here:
+https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry
