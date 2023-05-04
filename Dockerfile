@@ -16,13 +16,19 @@ RUN apt-get install gcc
 RUN ./install.sh
 # needed for some image processing libraries used in detectron2
 RUN apt-get install ffmpeg libsm6 libxext6  -y
+# needed for getting YT audio from video
+RUN pip install pytube==12.1.3
 
 COPY Makefile .
 COPY app.py app.py
 COPY Home.py Home.py
 COPY pages pages
+# needed to change style of streamlit frontend
 COPY style style
+# needed to add Google Analytics
 COPY index.html /opt/conda/lib/python3.10/site-packages/streamlit/static/index.html
+# this is YT authentication token. Needed for downloading audio/video from YT
+COPY tokens.json /opt/conda/lib/python3.10/site-packages/pytube/__cache__/tokens.json
 
 ENV OPENAI_API_KEY=""
 ENV ACTIVELOOP_TOKEN=""

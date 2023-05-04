@@ -4,7 +4,7 @@
 # Created Date: Friday, 28th April 2023 8:26:49 pm                             #
 # Author: Viraj Bagal (viraj.bagal@synapsica.com)                              #
 # -----                                                                        #
-# Last Modified: Wednesday, 3rd May 2023 6:34:00 pm                            #
+# Last Modified: Thursday, 4th May 2023 11:37:43 am                            #
 # Modified By: Viraj Bagal (viraj.bagal@synapsica.com)                         #
 # -----                                                                        #
 # Copyright (c) 2023 Synapsica                                                 #
@@ -64,8 +64,7 @@ def create_prompts():
 
     You are a helpful assistant that helps summarize information.
     Your goal is to write a summary that will highlight key points.
-    Do not respond with anything outside of the information. If you don't know, say, "I don't know"
-    
+    Do not respond with anything outside of the information. If you don't know, say, "I don't know"    
     """
     system_message_prompt_map = SystemMessagePromptTemplate.from_template(template)
 
@@ -96,7 +95,7 @@ def create_prompts():
 
 
 def long_content_summarizer(document, output_format):
-    texts = utils.split_text(document, 2000, 0)
+    texts = utils.split_text(document, 3000, 0)
     summary = content_summarizer(texts, output_format, chain_type="map_reduce")
     return summary
 
@@ -106,17 +105,17 @@ def summarize_youtube_video(url, output_format):
         logger.info("Loading YT content")
         result = utils.load_youtube_url(url)
         logger.info("YT content loaded")
-        num_tokens = utils.estimate_tokens(result[0])
+        num_tokens = utils.estimate_tokens(result)
         logger.info(f"Estimated tokens are {num_tokens}")
         if num_tokens > utils.REJECT_TOKENS_THRESHOLD:
             logger.info(f"Rejecting request due to large number of tokens: {num_tokens}")
-            return "Sorry! Too long"
-        if num_tokens > utils.LONG_VIDEO_THRESHOLD:
-            logger.info("Generating summary from long_content_summarizer")
-            summary = long_content_summarizer(result, output_format)
-        else:
-            logger.info("Generating summary from content_summarizer")
-            summary = content_summarizer(result, output_format, chain_type="map_reduce")
+            return "Sorry! Too long. Actually, it can even summarise extremely long contents, but because this service is free, the current limit is ~7500 words. Roughly around 25-30 min video. You can try Q&A on this content."
+        # if num_tokens > utils.LONG_VIDEO_THRESHOLD:
+        logger.info("Generating summary from long_content_summarizer")
+        summary = long_content_summarizer(result, output_format)
+        # else:
+        #     logger.info("Generating summary from content_summarizer")
+        #     summary = content_summarizer(result, output_format, chain_type="map_reduce")
         logger.info("Summary generated \n \n")
     except:
         logging.exception("")
@@ -138,15 +137,13 @@ def summarize_file(file_path, output_format):
             result = utils.load_image(file_path)
         logger.info("File loaded for qa")
         logger.info(f"Total number of pages are {len(result)}")
-        total_tokens = 0
-        for page in result:
-            total_tokens += utils.estimate_tokens(page)
+        total_tokens = utils.estimate_tokens(result)
         logger.info(f"Estimated tokens are {total_tokens}")
         if total_tokens > utils.REJECT_TOKENS_THRESHOLD:
             logger.info(f"Rejecting request due to large number of tokens: {total_tokens}")
-            return "Sorry! Too long"
+            return "Sorry! Too long. Actually, it can even summarise extremely long contents, but because this service is free, the current limit is ~7500 words. You can try Q&A on this content."
         logger.info("Generating summary from content_summarizer")
-        summary = content_summarizer(result, output_format, chain_type="map_reduce")
+        summary = long_content_summarizer(result, output_format)
         logger.info("Summary generated \n \n")
     except:
         logging.exception("")
