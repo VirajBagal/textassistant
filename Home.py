@@ -4,7 +4,7 @@
 # Created Date: Thursday, 27th April 2023 8:40:12 pm                           #
 # Author: Viraj Bagal (viraj.bagal@synapsica.com)                              #
 # -----                                                                        #
-# Last Modified: Thursday, 4th May 2023 5:52:34 pm                             #
+# Last Modified: Thursday, 4th May 2023 8:09:45 pm                             #
 # Modified By: Viraj Bagal (viraj.bagal@synapsica.com)                         #
 # -----                                                                        #
 # Copyright (c) 2023 Synapsica                                                 #
@@ -17,7 +17,10 @@ from utils import utils
 
 logger = logging.getLogger("root")
 
-
+# needs to be the first streamlit command
+st.set_page_config(
+    page_title="InsightAI - Home", page_icon=":sunglasses:", layout="centered", initial_sidebar_state="expanded"
+)
 ## remove default streamlit styles
 hide_streamlit_style = """
                 <style>
@@ -152,7 +155,7 @@ stripe_payment_link = """
 with open("style/main.css") as f:
     st.markdown(f"""<style>{f.read()}</style>""", unsafe_allow_html=True)
 
-set_page_title("Home")
+# set_page_title("Home")
 
 with st.sidebar:
     st.subheader("Buy me a coffee :smile:")

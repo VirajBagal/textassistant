@@ -4,13 +4,17 @@
 # Created Date: Monday, 1st May 2023 10:38:44 pm                               #
 # Author: Viraj Bagal (viraj.bagal@synapsica.com)                              #
 # -----                                                                        #
-# Last Modified: Thursday, 4th May 2023 6:05:28 pm                             #
+# Last Modified: Thursday, 4th May 2023 8:09:52 pm                             #
 # Modified By: Viraj Bagal (viraj.bagal@synapsica.com)                         #
 # -----                                                                        #
 # Copyright (c) 2023 Synapsica                                                 #
 ################################################################################
 import streamlit as st
 
+# needs to be the first streamlit command
+st.set_page_config(
+    page_title="InsightAI - Contact", page_icon=":sunglasses:", layout="centered", initial_sidebar_state="expanded"
+)
 ## remove default streamlit styles
 hide_streamlit_style = """
                 <style>
@@ -95,7 +99,7 @@ stripe_payment_link = """
 </stripe-buy-button>
 """
 
-set_page_title("Contact")
+# set_page_title("Contact")
 
 with st.sidebar:
     st.subheader("Buy me a coffee :smile:")
