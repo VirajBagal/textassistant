@@ -4,7 +4,7 @@
 # Created Date: Thursday, 27th April 2023 8:40:12 pm                           #
 # Author: Viraj Bagal (viraj.bagal@synapsica.com)                              #
 # -----                                                                        #
-# Last Modified: Thursday, 4th May 2023 11:36:27 am                            #
+# Last Modified: Thursday, 4th May 2023 12:52:09 pm                            #
 # Modified By: Viraj Bagal (viraj.bagal@synapsica.com)                         #
 # -----                                                                        #
 # Copyright (c) 2023 Synapsica                                                 #
@@ -143,8 +143,8 @@ with open("style/main.css") as f:
 set_page_title("Home")
 
 with st.sidebar:
+    st.components.v1.html(twitter_follow_html, height=50)
     st.components.v1.html(linkedin_profile_html, height=300)
-    st.components.v1.html(twitter_follow_html, height=100)
 
 colT1, colT2 = st.columns([1, 3])
 with colT2:

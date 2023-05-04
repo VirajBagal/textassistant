@@ -4,7 +4,7 @@
 # Created Date: Monday, 1st May 2023 10:38:44 pm                               #
 # Author: Viraj Bagal (viraj.bagal@synapsica.com)                              #
 # -----                                                                        #
-# Last Modified: Wednesday, 3rd May 2023 1:16:26 pm                            #
+# Last Modified: Thursday, 4th May 2023 12:52:04 pm                            #
 # Modified By: Viraj Bagal (viraj.bagal@synapsica.com)                         #
 # -----                                                                        #
 # Copyright (c) 2023 Synapsica                                                 #
@@ -86,8 +86,8 @@ linkedin_profile_html = """
 set_page_title("Contact")
 
 with st.sidebar:
+    st.components.v1.html(twitter_follow_html, height=50)
     st.components.v1.html(linkedin_profile_html, height=300)
-    st.components.v1.html(twitter_follow_html, height=100)
 
 
 contact_form = """
