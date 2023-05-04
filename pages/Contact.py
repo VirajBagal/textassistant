@@ -4,7 +4,7 @@
 # Created Date: Monday, 1st May 2023 10:38:44 pm                               #
 # Author: Viraj Bagal (viraj.bagal@synapsica.com)                              #
 # -----                                                                        #
-# Last Modified: Thursday, 4th May 2023 8:09:52 pm                             #
+# Last Modified: Thursday, 4th May 2023 8:41:42 pm                             #
 # Modified By: Viraj Bagal (viraj.bagal@synapsica.com)                         #
 # -----                                                                        #
 # Copyright (c) 2023 Synapsica                                                 #
@@ -12,9 +12,7 @@
 import streamlit as st
 
 # needs to be the first streamlit command
-st.set_page_config(
-    page_title="InsightAI - Contact", page_icon=":sunglasses:", layout="centered", initial_sidebar_state="expanded"
-)
+st.set_page_config(page_title="InsightAI - Contact", page_icon=":sunglasses:", layout="centered")
 ## remove default streamlit styles
 hide_streamlit_style = """
                 <style>

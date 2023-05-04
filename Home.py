@@ -4,7 +4,7 @@
 # Created Date: Thursday, 27th April 2023 8:40:12 pm                           #
 # Author: Viraj Bagal (viraj.bagal@synapsica.com)                              #
 # -----                                                                        #
-# Last Modified: Thursday, 4th May 2023 8:09:45 pm                             #
+# Last Modified: Thursday, 4th May 2023 8:41:32 pm                             #
 # Modified By: Viraj Bagal (viraj.bagal@synapsica.com)                         #
 # -----                                                                        #
 # Copyright (c) 2023 Synapsica                                                 #
@@ -18,9 +18,7 @@ from utils import utils
 logger = logging.getLogger("root")
 
 # needs to be the first streamlit command
-st.set_page_config(
-    page_title="InsightAI - Home", page_icon=":sunglasses:", layout="centered", initial_sidebar_state="expanded"
-)
+st.set_page_config(page_title="InsightAI - Home", page_icon=":sunglasses:", layout="centered")
 ## remove default streamlit styles
 hide_streamlit_style = """
                 <style>
