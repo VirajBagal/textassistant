@@ -4,7 +4,7 @@
 # Created Date: Thursday, 27th April 2023 8:40:12 pm                           #
 # Author: Viraj Bagal (viraj.bagal@synapsica.com)                              #
 # -----                                                                        #
-# Last Modified: Wednesday, 3rd May 2023 6:09:57 pm                            #
+# Last Modified: Thursday, 4th May 2023 11:36:27 am                            #
 # Modified By: Viraj Bagal (viraj.bagal@synapsica.com)                         #
 # -----                                                                        #
 # Copyright (c) 2023 Synapsica                                                 #
@@ -199,7 +199,8 @@ if category != "" and is_supported and (uploaded_file or yt_url):
                 with st.spinner("Summarising the input..."):
                     response = send_summarize_request(uploaded_file=uploaded_file, yt_url=yt_url)
                 if response not in [
-                    "Sorry! Too long. Currently, service has 20,000 token limit",
+                    "Sorry! Too long. Actually, it can even summarise extremely long contents, but because this service is free, the current limit is ~7500 words. Roughly around 25-30 min video. You can try Q&A on this content.",
+                    "Sorry! Too long. Actually, it can even summarise extremely long contents, but because this service is free, the current limit is ~7500 words. You can try Q&A on this content.",
                     "File cannot be processed",
                     "Video cannot be processed",
                 ]:

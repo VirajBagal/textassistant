@@ -30,7 +30,7 @@ Prerequisite: Install docker
    OPENAI_API_KEY=YOURKEY
    ACTIVELOOP_TOKEN=YOURKEY
    ```
-5. `docker run -p 8501:8501 --env-file .env localrun:latest`
+5. `docker run -p 8501:8501 --env-file .env -v YOUR_LOCAL_PATH:/textassistant/received_files -v YOUR_LOCAL_PATH:/textassistant/logs --name test localrun:latest`
 6. Open any browser and go to `127.0.0.1:8501` to see the project
 
 Use `./kill_all_containers.sh` to stop the servers
@@ -98,3 +98,10 @@ Twitter follow button: https://publish.twitter.com/?buttonType=FollowButton&quer
 
 Before pushing and pulling we need to setup credentials using github token. Process can be found here:
 https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry
+
+
+### Pytube error
+
+We need to use `video = YouTube(url, use_oauth=True, allow_oauth_cache=True)`. Start the server, you will get a link for authentication. Allow permissions by clicking on the link. Next time onwards, it won't ask for authentication. This authentication expires sometimes, so repeat the process.
+
+Run the `test.py` (`/home/admin/textassisstant/textassistant/test.py`) file locally to do the above process. A `token.json` is generated at `/home/admin/anaconda3/envs/beast/lib/python3.10/site-packages/pytube/__cache__/tokens.json`. Copy that file to this project dir. This will allow docker to copy this token.json in the image and use in on server 

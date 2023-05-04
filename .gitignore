@@ -2,5 +2,8 @@ __pycache__/
 .env
 *.log
 *.pdf
+tokens.json
 database
 received_files
+logs
+test.py
