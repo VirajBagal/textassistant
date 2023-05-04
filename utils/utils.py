@@ -4,7 +4,7 @@
 # Created Date: Friday, 28th April 2023 8:24:42 pm                             #
 # Author: Viraj Bagal (viraj.bagal@synapsica.com)                              #
 # -----                                                                        #
-# Last Modified: Thursday, 4th May 2023 12:44:39 pm                            #
+# Last Modified: Thursday, 4th May 2023 2:13:38 pm                             #
 # Modified By: Viraj Bagal (viraj.bagal@synapsica.com)                         #
 # -----                                                                        #
 # Copyright (c) 2023 Synapsica                                                 #
@@ -102,7 +102,11 @@ def read_transcript(path):
 def load_youtube_url(url):
     url = convert_from_mobile_url(url)
     loader = YoutubeLoader.from_youtube_url(url, add_video_info=False)
-    result = loader.load()
+    # ToDo: upgrade langchain version in docker to take care of this
+    try:
+        result = loader.load()
+    except:
+        result = []
     # if captions are not available, result will be empty. So run speech-to-text model
     if not result:
         audio_path = audio_download_path(url)
