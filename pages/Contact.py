@@ -4,7 +4,7 @@
 # Created Date: Monday, 1st May 2023 10:38:44 pm                               #
 # Author: Viraj Bagal (viraj.bagal@synapsica.com)                              #
 # -----                                                                        #
-# Last Modified: Thursday, 4th May 2023 12:52:04 pm                            #
+# Last Modified: Thursday, 4th May 2023 6:05:28 pm                             #
 # Modified By: Viraj Bagal (viraj.bagal@synapsica.com)                         #
 # -----                                                                        #
 # Copyright (c) 2023 Synapsica                                                 #
@@ -83,9 +83,24 @@ linkedin_profile_html = """
 <div class="badge-base LI-profile-badge" data-locale="en_US" data-size="medium" data-theme="light" data-type="VERTICAL" data-vanity="virajbagal" data-version="v1"></div>
 """
 
+stripe_payment_link = """
+<script async
+  src="https://js.stripe.com/v3/buy-button.js">
+</script>
+
+<stripe-buy-button
+  buy-button-id="buy_btn_1N40hVSAlzIVpE1tBlJ5TQSO"
+  publishable-key="pk_live_51N40DgSAlzIVpE1tXxSwFX62jKO17OAuiMvBN8VJwBki3RH7toe8P8qPgjjZPVhHLLr4frnbhf3rspNbXBY5rojC00OINvft4D"
+>
+</stripe-buy-button>
+"""
+
 set_page_title("Contact")
 
 with st.sidebar:
+    st.subheader("Buy me a coffee :smile:")
+    st.components.v1.html(stripe_payment_link, height=300)
+    st.subheader("Lets Connect!")
     st.components.v1.html(twitter_follow_html, height=50)
     st.components.v1.html(linkedin_profile_html, height=300)
 
@@ -108,8 +123,10 @@ with colT2:
     st.subheader("Understand content quickly with :blue[AI Summarization and Interactive Q&A]")
     st.caption("Supports :blue[PNGs, JPGs, Docs, PDFs, Youtube Videos]")
 
+
 st.text("")
 st.text("")
+
 st.markdown(contact_form, unsafe_allow_html=True)
 
 

@@ -86,7 +86,8 @@ This means you have successfully transfered the NameServers to AWS.
 Linkedin Profile: https://www.youtube.com/watch?v=R361fvf3Cic
 Twitter follow button: https://publish.twitter.com/?buttonType=FollowButton&query=https%3A%2F%2Ftwitter.com%2FTwitterDev&widget=Button
 18. Different types of retrieval: https://blog.langchain.dev/retrieval/#:~:text=The%20main%20way%20most%20people,for%20storing%20and%20querying%20vectors).
-
+19. ngrok can also be used for https, reverse-proxy
+20. ToDO: Add Stripe Checkout page to enable Apple Pay and Google Pay: https://stripe.com/docs/checkout/quickstart?lang=python
 
 #### How I ran in development
 
