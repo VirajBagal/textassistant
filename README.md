@@ -88,6 +88,7 @@ Twitter follow button: https://publish.twitter.com/?buttonType=FollowButton&quer
 18. Different types of retrieval: https://blog.langchain.dev/retrieval/#:~:text=The%20main%20way%20most%20people,for%20storing%20and%20querying%20vectors).
 19. ngrok can also be used for https, reverse-proxy
 20. ToDO: Add Stripe Checkout page to enable Apple Pay and Google Pay: https://stripe.com/docs/checkout/quickstart?lang=python
+21. For indexing the website on Google, see the `Common tasks` section of this page. But before requesting indexing from Google, we need to add the domain to property on `Google Search Console`. Then request indexing: https://support.google.com/webmasters/answer/9012289
 
 #### How I ran in development
 
