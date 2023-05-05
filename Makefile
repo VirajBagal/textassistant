@@ -2,6 +2,7 @@ create_dirs:
 	mkdir -p database
 	mkdir -p received_files
 	mkdir -p logs
+	mkdir -p created_files
 
 start_frontend:
 	streamlit run Home.py --server.port=8501 

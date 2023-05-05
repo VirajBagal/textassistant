@@ -4,7 +4,7 @@
 # Created Date: Thursday, 27th April 2023 5:27:15 pm                           #
 # Author: Viraj Bagal (viraj.bagal@synapsica.com)                              #
 # -----                                                                        #
-# Last Modified: Friday, 5th May 2023 4:01:56 pm                               #
+# Last Modified: Saturday, 6th May 2023 12:49:49 am                            #
 # Modified By: Viraj Bagal (viraj.bagal@synapsica.com)                         #
 # -----                                                                        #
 # Copyright (c) 2023 Synapsica                                                 #
@@ -56,7 +56,7 @@ async def ask_question(question):
     logger.info(f"Question received at ask_question endpoint: {question}")
     if isinstance(data, pd.DataFrame):
         # if dataframe is uploaded, then retriever is actually a PandasAI object
-        answer = retriever.run(data, prompt=question)
+        answer = qa_utils.retrieve_from_dataframe(data, question)
         logger.info("Answer generated \n \n")
         return {"response": answer}
     admin_prompt = "Following is a question, answer it only based on the document. If answer is not available, respond with 'Answer not found in document'. Do not generate any response other than based on document. Here is the question: "

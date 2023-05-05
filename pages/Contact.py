@@ -4,7 +4,7 @@
 # Created Date: Monday, 1st May 2023 10:38:44 pm                               #
 # Author: Viraj Bagal (viraj.bagal@synapsica.com)                              #
 # -----                                                                        #
-# Last Modified: Thursday, 4th May 2023 8:41:42 pm                             #
+# Last Modified: Saturday, 6th May 2023 2:04:44 am                             #
 # Modified By: Viraj Bagal (viraj.bagal@synapsica.com)                         #
 # -----                                                                        #
 # Copyright (c) 2023 Synapsica                                                 #
@@ -123,7 +123,7 @@ with colT2:
 colT1, colT2 = st.columns([1, 6])
 with colT2:
     st.subheader("Understand content quickly with :blue[AI Summarization and Interactive Q&A]")
-    st.caption("Supports :blue[PNGs, JPGs, Docs, PDFs, Youtube Videos]")
+    st.caption("Supports :blue[CSVs, Google Sheets, PNGs, JPGs, Docs, PDFs, Youtube Videos]")
 
 
 st.text("")

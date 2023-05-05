@@ -4,7 +4,7 @@
 # Created Date: Thursday, 27th April 2023 8:40:12 pm                           #
 # Author: Viraj Bagal (viraj.bagal@synapsica.com)                              #
 # -----                                                                        #
-# Last Modified: Friday, 5th May 2023 3:51:22 pm                               #
+# Last Modified: Saturday, 6th May 2023 2:04:00 am                             #
 # Modified By: Viraj Bagal (viraj.bagal@synapsica.com)                         #
 # -----                                                                        #
 # Copyright (c) 2023 Synapsica                                                 #
@@ -139,7 +139,7 @@ with colT2:
 colT1, colT2 = st.columns([1, 6])
 with colT2:
     st.subheader("Understand content quickly with :blue[AI Summarization and Interactive Q&A]")
-    st.caption("Supports :blue[PNGs, JPGs, Docs, PDFs, Youtube Videos]")
+    st.caption("Supports :blue[CSVs, Google Sheets, PNGs, JPGs, Docs, PDFs, Youtube Videos]")
 
 st.text("")
 st.text("")
@@ -152,7 +152,7 @@ if category == "File":
     if uploaded_file:
         file_name = uploaded_file.name
         extension = file_name.split(".")[-1]
-        allowed_file_types = ["doc", "docx", "pdf", "jpg", "png", "csv"]
+        allowed_file_types = ["doc", "docx", "pdf", "jpg", "png", "csv", "xlsx"]
         is_supported = extension in allowed_file_types
         if not is_supported:
             st.error(f"This file format is not supported. Please upload either of {', '.join(allowed_file_types)}")
@@ -172,14 +172,17 @@ if category != "" and is_supported and (uploaded_file or yt_url):
             if st.button("Submit"):
                 with st.spinner("AI is searching..."):
                     answer = get_answer(title)
-                st.info(answer)
+                if "png" in answer:
+                    st.image(answer)
+                else:
+                    st.info(answer)
         else:
             st.error(f":red[{response}]")
         logger.info("Completed the request \n \n")
     elif task == "Summarize":
         # Only QA is support for csv, so check it first
-        if uploaded_file and extension == "csv":
-            st.error("Only Q&A is supported for csv files")
+        if uploaded_file and extension in ["csv", "xlsx"]:
+            st.error("Only Q&A is supported for csv-like files")
         else:
             output_format = st.radio(
                 "What output format?", ("", "One Sentence", "Bullet points", "Short", "Long"), horizontal=True

@@ -4,7 +4,7 @@
 # Created Date: Friday, 28th April 2023 8:27:55 pm                             #
 # Author: Viraj Bagal (viraj.bagal@synapsica.com)                              #
 # -----                                                                        #
-# Last Modified: Friday, 5th May 2023 3:43:12 pm                               #
+# Last Modified: Saturday, 6th May 2023 2:02:11 am                             #
 # Modified By: Viraj Bagal (viraj.bagal@synapsica.com)                         #
 # -----                                                                        #
 # Copyright (c) 2023 Synapsica                                                 #
@@ -13,8 +13,10 @@ from utils import utils
 from langchain.chat_models import ChatOpenAI
 from langchain.chains import RetrievalQA
 import logging
+import os
 from pandasai import PandasAI
 from pandasai.llm.openai import OpenAI
+import uuid
 
 logger = logging.getLogger("root")
 
@@ -38,8 +40,12 @@ def prepare_files_for_qa(file_path):
             content = utils.load_doc(file_path)
         elif ".png" in file_path or ".jpg" in file_path:
             content = utils.load_image(file_path)
-        elif "csv" in file_path:
-            content = utils.load_csv(file_path)
+        elif "csv" in file_path or "xlsx" in file_path:
+            try:
+                content = utils.load_csv(file_path)
+            except:
+                logging.exception("")
+                return "Wrong format of file", content
             logger.info("Dataframe loaded")
             llm = OpenAI()
             pandas_ai = PandasAI(llm)
@@ -61,7 +67,7 @@ def prepare_files_for_qa(file_path):
         logger.info("Retriever initialized")
     except:
         logging.exception("")
-        return "File cannot be processed"
+        return "File cannot be processed", content
     return retriever, content
 
 
@@ -86,3 +92,30 @@ def prepare_yt_video_for_qa(yt_url):
         logging.exception("")
         return "Video cannot be processed"
     return retriever, content
+
+
+def retrieve_from_dataframe(data, question):
+    try:
+        llm = OpenAI(model="gpt-4")
+        pandas_ai = PandasAI(llm, verbose=True)
+        saving_path = os.path.join("created_files", str(uuid.uuid4()).split("-")[0] + ".png")
+        my_prompt = f"""You will be given an instruction. Do the following only if the instruction is strictly related to the `df`, else reply "Please ask question related to data"
+
+        If it starts with `Plot:` then do the following:
+        1. plot the graph using seaborn or matplotlib
+        2. Beautify it by using sns.despine for top and right margins. Use darkgrid style
+        2. save the graph using matplotlib with {saving_path} as name
+
+        Else:
+        Answer in plain text
+        \n
+        """
+        answer = pandas_ai.run(data, prompt=my_prompt + question)
+        if os.path.exists(saving_path):
+            logger.info(f"Plot saved at {saving_path}")
+            return saving_path
+        logger.info("Answer obtained from dataframe")
+    except:
+        logging.exception("")
+        return f"Sorry, could not understand the instruction. Make sure you are using the column names correctly in the instruction: {', '.join(list(data.columns))}"
+    return answer
