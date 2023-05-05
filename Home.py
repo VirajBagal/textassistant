@@ -4,7 +4,7 @@
 # Created Date: Thursday, 27th April 2023 8:40:12 pm                           #
 # Author: Viraj Bagal (viraj.bagal@synapsica.com)                              #
 # -----                                                                        #
-# Last Modified: Thursday, 4th May 2023 12:52:09 pm                            #
+# Last Modified: Thursday, 4th May 2023 8:41:32 pm                             #
 # Modified By: Viraj Bagal (viraj.bagal@synapsica.com)                         #
 # -----                                                                        #
 # Copyright (c) 2023 Synapsica                                                 #
@@ -17,7 +17,8 @@ from utils import utils
 
 logger = logging.getLogger("root")
 
-
+# needs to be the first streamlit command
+st.set_page_config(page_title="InsightAI - Home", page_icon=":sunglasses:", layout="centered")
 ## remove default streamlit styles
 hide_streamlit_style = """
                 <style>
@@ -137,14 +138,30 @@ linkedin_profile_html = """
 <div class="badge-base LI-profile-badge" data-locale="en_US" data-size="medium" data-theme="light" data-type="VERTICAL" data-vanity="virajbagal" data-version="v1"></div>
 """
 
+stripe_payment_link = """
+<script async
+  src="https://js.stripe.com/v3/buy-button.js">
+</script>
+
+<stripe-buy-button
+  buy-button-id="buy_btn_1N40hVSAlzIVpE1tBlJ5TQSO"
+  publishable-key="pk_live_51N40DgSAlzIVpE1tXxSwFX62jKO17OAuiMvBN8VJwBki3RH7toe8P8qPgjjZPVhHLLr4frnbhf3rspNbXBY5rojC00OINvft4D"
+>
+</stripe-buy-button>
+"""
+
 with open("style/main.css") as f:
     st.markdown(f"""<style>{f.read()}</style>""", unsafe_allow_html=True)
 
-set_page_title("Home")
+# set_page_title("Home")
 
 with st.sidebar:
+    st.subheader("Buy me a coffee :smile:")
+    st.components.v1.html(stripe_payment_link, height=300)
+    st.subheader("Lets Connect!")
     st.components.v1.html(twitter_follow_html, height=50)
     st.components.v1.html(linkedin_profile_html, height=300)
+
 
 colT1, colT2 = st.columns([1, 3])
 with colT2:
