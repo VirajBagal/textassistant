@@ -2,10 +2,10 @@ __pycache__/
 .env
 *.log
 *.pdf
+*.ipynb
 tokens.json
 database
 received_files
 logs
 test.py
-test_notebook.ipynb
 created_files
