@@ -4,7 +4,7 @@
 # Created Date: Thursday, 27th April 2023 8:40:12 pm                           #
 # Author: Viraj Bagal (viraj.bagal@synapsica.com)                              #
 # -----                                                                        #
-# Last Modified: Thursday, 4th May 2023 8:41:32 pm                             #
+# Last Modified: Saturday, 6th May 2023 2:04:00 am                             #
 # Modified By: Viraj Bagal (viraj.bagal@synapsica.com)                         #
 # -----                                                                        #
 # Copyright (c) 2023 Synapsica                                                 #
@@ -52,34 +52,6 @@ hide_streamlit_style = """
                 </style>
                 """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
-
-
-def set_page_title(title):
-    st.sidebar.markdown(
-        unsafe_allow_html=True,
-        body=f"""
-        <iframe height=0 srcdoc="<script>
-            const title = window.parent.document.querySelector('title') \
-                
-            const oldObserver = window.parent.titleObserver
-            if (oldObserver) {{
-                oldObserver.disconnect()
-            }} \
-
-            const newObserver = new MutationObserver(function(mutations) {{
-                const target = mutations[0].target
-                if (target.text !== '{title}') {{
-                    target.text = '{title}'
-                }}
-            }}) \
-
-            newObserver.observe(title, {{ childList: true }})
-            window.parent.titleObserver = newObserver \
-
-            title.text = '{title}'
-        </script>" />
-    """,
-    )
 
 
 def get_answer(text):
@@ -153,8 +125,6 @@ stripe_payment_link = """
 with open("style/main.css") as f:
     st.markdown(f"""<style>{f.read()}</style>""", unsafe_allow_html=True)
 
-# set_page_title("Home")
-
 with st.sidebar:
     st.subheader("Buy me a coffee :smile:")
     st.components.v1.html(stripe_payment_link, height=300)
@@ -169,7 +139,7 @@ with colT2:
 colT1, colT2 = st.columns([1, 6])
 with colT2:
     st.subheader("Understand content quickly with :blue[AI Summarization and Interactive Q&A]")
-    st.caption("Supports :blue[PNGs, JPGs, Docs, PDFs, Youtube Videos]")
+    st.caption("Supports :blue[CSVs, Google Sheets, PNGs, JPGs, Docs, PDFs, Youtube Videos]")
 
 st.text("")
 st.text("")
@@ -182,7 +152,7 @@ if category == "File":
     if uploaded_file:
         file_name = uploaded_file.name
         extension = file_name.split(".")[-1]
-        allowed_file_types = ["doc", "docx", "pdf", "jpg", "png"]
+        allowed_file_types = ["doc", "docx", "pdf", "jpg", "png", "csv", "xlsx"]
         is_supported = extension in allowed_file_types
         if not is_supported:
             st.error(f"This file format is not supported. Please upload either of {', '.join(allowed_file_types)}")
@@ -202,26 +172,33 @@ if category != "" and is_supported and (uploaded_file or yt_url):
             if st.button("Submit"):
                 with st.spinner("AI is searching..."):
                     answer = get_answer(title)
-                st.info(answer)
+                if "png" in answer:
+                    st.image(answer)
+                else:
+                    st.info(answer)
         else:
             st.error(f":red[{response}]")
         logger.info("Completed the request \n \n")
     elif task == "Summarize":
-        output_format = st.radio(
-            "What output format?", ("", "One Sentence", "Bullet points", "Short", "Long"), horizontal=True
-        )
-        if output_format != "":
-            response = set_output_format(output_format)
-            if response == "Successful":
-                with st.spinner("Summarising the input..."):
-                    response = send_summarize_request(uploaded_file=uploaded_file, yt_url=yt_url)
-                if response not in [
-                    "Sorry! Too long. Actually, it can even summarise extremely long contents, but because this service is free, the current limit is ~7500 words. Roughly around 25-30 min video. You can try Q&A on this content.",
-                    "Sorry! Too long. Actually, it can even summarise extremely long contents, but because this service is free, the current limit is ~7500 words. You can try Q&A on this content.",
-                    "File cannot be processed",
-                    "Video cannot be processed",
-                ]:
-                    st.info(response)
-                else:
-                    st.error(f":red[{response}]")
-                logger.info("Completed the request \n \n")
+        # Only QA is support for csv, so check it first
+        if uploaded_file and extension in ["csv", "xlsx"]:
+            st.error("Only Q&A is supported for csv-like files")
+        else:
+            output_format = st.radio(
+                "What output format?", ("", "One Sentence", "Bullet points", "Short", "Long"), horizontal=True
+            )
+            if output_format != "":
+                response = set_output_format(output_format)
+                if response == "Successful":
+                    with st.spinner("Summarising the input..."):
+                        response = send_summarize_request(uploaded_file=uploaded_file, yt_url=yt_url)
+                    if response not in [
+                        "Sorry! Too long. Actually, it can even summarise extremely long contents, but because this service is free, the current limit is ~7500 words. Roughly around 25-30 min video. You can try Q&A on this content.",
+                        "Sorry! Too long. Actually, it can even summarise extremely long contents, but because this service is free, the current limit is ~7500 words. You can try Q&A on this content.",
+                        "File cannot be processed",
+                        "Video cannot be processed",
+                    ]:
+                        st.info(response)
+                    else:
+                        st.error(f":red[{response}]")
+                    logger.info("Completed the request \n \n")

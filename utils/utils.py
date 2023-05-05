@@ -4,7 +4,7 @@
 # Created Date: Friday, 28th April 2023 8:24:42 pm                             #
 # Author: Viraj Bagal (viraj.bagal@synapsica.com)                              #
 # -----                                                                        #
-# Last Modified: Thursday, 4th May 2023 2:13:38 pm                             #
+# Last Modified: Saturday, 6th May 2023 1:46:18 am                             #
 # Modified By: Viraj Bagal (viraj.bagal@synapsica.com)                         #
 # -----                                                                        #
 # Copyright (c) 2023 Synapsica                                                 #
@@ -19,6 +19,7 @@ import logging
 import openai
 import os
 from pytube import YouTube
+import pandas as pd
 
 logger = logging.getLogger("root")
 
@@ -43,6 +44,12 @@ def load_image(image_path):
     loader = UnstructuredImageLoader(image_path)
     data = loader.load()
     return data
+
+
+def load_csv(csv_path):
+    if "csv" in csv_path:
+        return pd.read_csv(csv_path)
+    return pd.read_excel(csv_path)
 
 
 def split_text(document, chunk_size, overlap):

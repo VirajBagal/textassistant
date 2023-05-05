@@ -4,7 +4,7 @@
 # Created Date: Thursday, 27th April 2023 5:27:15 pm                           #
 # Author: Viraj Bagal (viraj.bagal@synapsica.com)                              #
 # -----                                                                        #
-# Last Modified: Tuesday, 2nd May 2023 7:43:46 pm                              #
+# Last Modified: Saturday, 6th May 2023 12:49:49 am                            #
 # Modified By: Viraj Bagal (viraj.bagal@synapsica.com)                         #
 # -----                                                                        #
 # Copyright (c) 2023 Synapsica                                                 #
@@ -13,6 +13,7 @@ from fastapi import FastAPI, UploadFile, File
 from utils import qa_utils, summary_utils
 from dotenv import load_dotenv
 import logging
+import pandas as pd
 
 logging.basicConfig(
     format="%(asctime)s - %(name)-8s - %(process)d - %(levelname)-7s [%(filename)s:%(lineno)d] - %(message)s",
@@ -32,8 +33,8 @@ async def upload_pdf(file: UploadFile = File(...)):
     logger.info(f"Received {file.filename} at upload_pdf endpoint")
     with open("./received_files/" + file.filename, "wb") as f:
         f.write(content)
-    global retriever
-    retriever = qa_utils.prepare_files_for_qa("./received_files/" + file.filename)
+    global retriever, data
+    retriever, data = qa_utils.prepare_files_for_qa("./received_files/" + file.filename)
     if isinstance(retriever, str):
         return {"status": retriever}
     return {"status": "Success"}
@@ -42,8 +43,9 @@ async def upload_pdf(file: UploadFile = File(...)):
 @app.post("/prepare_yt_video_for_qa")
 async def prepare_yt_video(yt_url):
     logger.info(f"{yt_url} YT URL received at prepare_yt_video_for_qa endpoint")
-    global retriever
-    retriever = qa_utils.prepare_yt_video_for_qa(yt_url)
+    # data is added because csv files need to be run differently in case of Q&A but the ask_question API is same even for youtube videos
+    global retriever, data
+    retriever, data = qa_utils.prepare_yt_video_for_qa(yt_url)
     if isinstance(retriever, str):
         return {"status": retriever}
     return {"status": "Success"}
@@ -52,6 +54,11 @@ async def prepare_yt_video(yt_url):
 @app.post("/ask_question")
 async def ask_question(question):
     logger.info(f"Question received at ask_question endpoint: {question}")
+    if isinstance(data, pd.DataFrame):
+        # if dataframe is uploaded, then retriever is actually a PandasAI object
+        answer = qa_utils.retrieve_from_dataframe(data, question)
+        logger.info("Answer generated \n \n")
+        return {"response": answer}
     admin_prompt = "Following is a question, answer it only based on the document. If answer is not available, respond with 'Answer not found in document'. Do not generate any response other than based on document. Here is the question: "
     question = admin_prompt + question
     answer = retriever.run(question)
