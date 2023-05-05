@@ -4,7 +4,7 @@
 # Created Date: Friday, 28th April 2023 8:27:55 pm                             #
 # Author: Viraj Bagal (viraj.bagal@synapsica.com)                              #
 # -----                                                                        #
-# Last Modified: Thursday, 4th May 2023 11:25:12 am                            #
+# Last Modified: Friday, 5th May 2023 3:43:12 pm                               #
 # Modified By: Viraj Bagal (viraj.bagal@synapsica.com)                         #
 # -----                                                                        #
 # Copyright (c) 2023 Synapsica                                                 #
@@ -13,6 +13,8 @@ from utils import utils
 from langchain.chat_models import ChatOpenAI
 from langchain.chains import RetrievalQA
 import logging
+from pandasai import PandasAI
+from pandasai.llm.openai import OpenAI
 
 logger = logging.getLogger("root")
 
@@ -36,6 +38,12 @@ def prepare_files_for_qa(file_path):
             content = utils.load_doc(file_path)
         elif ".png" in file_path or ".jpg" in file_path:
             content = utils.load_image(file_path)
+        elif "csv" in file_path:
+            content = utils.load_csv(file_path)
+            logger.info("Dataframe loaded")
+            llm = OpenAI()
+            pandas_ai = PandasAI(llm)
+            return pandas_ai, content
 
         logger.info("file loaded for qa")
         logger.info(f"Total number of pages are {len(content)}")
@@ -54,7 +62,7 @@ def prepare_files_for_qa(file_path):
     except:
         logging.exception("")
         return "File cannot be processed"
-    return retriever
+    return retriever, content
 
 
 def prepare_yt_video_for_qa(yt_url):
@@ -77,4 +85,4 @@ def prepare_yt_video_for_qa(yt_url):
     except:
         logging.exception("")
         return "Video cannot be processed"
-    return retriever
+    return retriever, content

@@ -18,6 +18,10 @@ RUN ./install.sh
 RUN apt-get install ffmpeg libsm6 libxext6  -y
 # needed for getting YT audio from video
 RUN pip install pytube==12.1.3
+# needed for pandasai
+RUN pip install pandasai==0.2.2
+# needed for plotting graphs
+RUN pip install seaborn==0.12.2
 
 COPY Makefile .
 COPY app.py app.py
